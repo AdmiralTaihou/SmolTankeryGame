@@ -46,6 +46,7 @@ Tank::Tank(const tankType& type) {
 
 int main(int argc, char* argv[])
 {
+	srand(time(0));
 	bool victory = false;
 	tankType type; std::string name;
 
