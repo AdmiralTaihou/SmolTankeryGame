@@ -1,10 +1,7 @@
 #include "smolTankeryGame.h"
 #include <string>
 
-typedef std::size_t tactics;
 
-const tactics maneuver = 0;
-const tactics angle = 1;
 
 Tank::Tank(const tankType& type) {
 
@@ -44,6 +41,82 @@ Tank::Tank(const tankType& type) {
 	}
 }
 
+Accuracy calculateAccuracy(const Tank& tankA, const Tank& tankB)
+{
+
+	Accuracy attackRoll = rand() % 100 + 1;
+
+	std::cout << tankA.name << " rolled a " << attackRoll << "." << std::endl;
+	std::cout << tankB.name << " has evasion of " << tankB.evasion << std::endl;
+
+	return attackRoll;
+}
+
+void calculateDamage(const Tactics& tankATactics, const Accuracy& attackRoll, const Tank& tankA, Tank& tankB)
+{
+	if (attackRoll >= tankB.evasion) {
+
+		int damageRoll = rand() % tankA.damage + 1;
+
+		if (attackRoll < 95) {
+			tankB.health -= damageRoll + tankATactics * 5;
+			std::cout << tankA.name << " deals " << damageRoll + tankATactics * 5 << " points of damage." << std::endl;
+		}
+		else {
+			tankB.health -= (damageRoll + tankATactics * 5) * 2;
+			std::cout << "A critical hit by " << tankA.name << " dealing" << (damageRoll + tankATactics * 5) * 2 << " damage to" << tankB.name << "!" << std::endl;
+		}
+		std::cout << tankB.name << "'s health has been lowered to " << tankB.health << "!" << std::endl;
+	}
+}
+
+Tactics declareTactics(const Tank& tank)
+{
+	std::cout << "What will " << tank.name << " do?" << std::endl;
+	std::cout << "0 - Maneuver" << std::endl; std::cout << "1 - Angle" << std::endl;
+	Tactics tanktactics = 0;
+	std::cin >> tanktactics;
+
+	return tanktactics;
+}
+
+void checkMediumTankFlag(Tank& tank, bool tankFlag)
+{
+	if (tank.type == medium && tank.health <= 0 && tankFlag == true) {
+		tankFlag = false;
+		tank.health = 1;
+		std::cout << tank.name << " has avoided getting disabled, but is at 1HP!" << std::endl;
+	}
+}
+
+void checkVictoryConditions(const Tank& tank, bool victory)
+{
+	if (tank.health <= 0) {
+		victory = true;
+	}
+}
+
+void announceStartOfTurn(const Tank& tankA, const Tank& tankB)
+{
+	std::cout << "################ NEXT TURN ################" << std::endl;
+	std::cout << "Attacker Tank is: " << tankA.name << "." << std::endl;
+	std::cout << "Defendar Tank is: " << tankB.name << "." << std::endl;
+}
+
+void announceTactics(const Tactics& tactics, const Tank& tank)
+{
+	if (tactics > 1 || tactics < 0) {
+		throw std::exception("Incorrect value for chosen tactics.");
+	}
+
+	if (tactics == 0) {
+		std::cout << tank.name << " is maneuvering." << std::endl;
+	}
+	else {
+		std::cout << tank.name << " is angling." << std::endl;
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	srand(time(0));
@@ -56,7 +129,7 @@ int main(int argc, char* argv[])
 	Tank tank1(type);
 	std::cout << "Input the tank model:" << std::endl;
 	std::cin.ignore();
-	std::getline(std::cin,name);
+	std::getline(std::cin, name);
 	tank1.name = name;
 
 	std::cout << "Please, input the number corresponding to the class of Tank 2." << std::endl;
@@ -73,96 +146,49 @@ int main(int argc, char* argv[])
 
 	while (victory != true) {
 
-		std::cout << "################ NEXT TURN ################" << std::endl;
-		std::cout << "Attacker Tank is: " << tank1.name << "." << std::endl;
-		std::cout << "Defendar Tank is: " << tank2.name << "." << std::endl;
+		announceStartOfTurn(tank1, tank2);
 
-		std::cout << "What will " << tank1.name << " do?" << std::endl;
-		std::cout << "0 - Maneuver" << std::endl; std::cout << "1 - Angle" << std::endl;
-		tactics tactics = 0;
-		std::cin >> tactics;
+		Tactics tank1tactics = declareTactics(tank1);
 
-		if (tactics > 1 || tactics < 0) {
-			throw std::exception("Incorrect value for chosen tactics.");
-		}
+		announceTactics(tank1tactics, tank1);
 
-		if (tactics == 0) {
-			std::cout << tank1.name << " is maneuvering." << std::endl;
-		}
-		else {
-			std::cout << tank1.name << " is angling." << std::endl;
-		}
-
-		int attackRoll = rand() % 100 + 1;
-
-		std::cout << tank1.name << " rolled a " << attackRoll << "." << std::endl;
-		std::cout << tank2.name << " has evasion of " << tank2.evasion << std::endl;
+		Accuracy attackRoll = calculateAccuracy(tank1, tank2);
 
 		if (attackRoll >= tank2.evasion) {
 
-			int damageRoll = rand() % tank1.damage + 1;
+			calculateDamage(tank1tactics, attackRoll, tank1, tank2);
 
-			if (attackRoll < 95) {
-				tank2.health -= damageRoll + tactics * 5;
-				std::cout << tank1.name << " deals " << damageRoll + tactics * 5 << " points of damage." << std::endl;
-			}
-			else {
-				tank2.health -= (damageRoll + tactics * 5) * 2;
-				std::cout << "A critical hit from the " << tank1.name << " taking" << (damageRoll + tactics * 5) * 2 << " damage!" << std::endl;
-			}
-			std::cout << tank2.name << "'s health has been lowered to " << tank2.health << "!" << std::endl;
+			checkMediumTankFlag(tank2, tank2Flag);
 
-			if (tank2.type == medium && tank2.health <= 0 && tank2Flag == true) {
-				tank2Flag = false;
-				tank2.health = 1;
-				std::cout << tank2.name << " has avoided getting disabled, but is at 1HP!" << std::endl;
-			}
+			checkVictoryConditions(tank2, victory);
 
-			if (tank2.health <= 0) {
-				victory = true;
-			}
 		}
+
 		else {
+
 			std::cout << "It's a miss!" << std::endl;
+
 			if (tank1.type == light) {
 
-				int attackRoll = rand() % 100 + 1;
-
 				std::cout << tank1.name << " is a light tank! It quickly reloads and shoots again!" << std::endl;
-				std::cout << tank1.name << " rolled a " << attackRoll << "." << std::endl;
-				std::cout << tank2.name << " has evasion of " << tank2.evasion << std::endl;
 
 				if (attackRoll >= tank2.evasion) {
-					int damageRoll = rand() % tank1.damage + 1;
 
-					if (attackRoll < 95) {
-						tank2.health -= damageRoll + tactics * 5;
-						std::cout << tank1.name << " deals " << damageRoll + tactics * 5 << " points of damage." << std::endl;
-					}
-					else {
-						tank2.health -= (damageRoll + tactics * 5) * 2;
-						std::cout << "A critical hit by " << tank1.name << " dealing" << (damageRoll + tactics * 5) * 2 << " damage to" << tank2.name << "!" << std::endl;
-					}
-					std::cout << tank2.name << "'s health has been lowered to " << tank2.health << "!" << std::endl;
+					Accuracy attackRoll = calculateAccuracy(tank1, tank2);
+
+					calculateDamage(tank1tactics, attackRoll, tank1, tank2);
+
+					checkMediumTankFlag(tank2, tank2Flag);
+
 				}
-
-				if (tank2.type == medium && tank2.health <= 0 && tank2Flag == true) {
-					tank2Flag = false;
-					tank2.health = 1;
-					std::cout << tank2.name << " has avoided getting disabled, but is at 1HP!" << std::endl;
-				}
-
-				if (tank2.health <= 0) {
-					victory = true;
-				}
-
 			}
-		}
-		system("pause");
+			checkVictoryConditions(tank2, victory);
+			system("pause");
 
+		}
+		std::cout << tank2.name << " has been disabled!" << std::endl;
+		std::cout << tank1.name << " wins!" << std::endl;
+		system("pause");
+		return 0;
 	}
-	std::cout << tank2.name << " has been disabled!" << std::endl;
-	std::cout << tank1.name << " wins!" << std::endl;
-	system("pause");
-	return 0;
 }

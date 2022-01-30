@@ -7,6 +7,11 @@
 
 
 typedef std::size_t tankType;
+typedef double Accuracy;
+typedef std::size_t Tactics;
+
+const Tactics maneuver = 0;
+const Tactics angle = 1;
 
 const tankType light = 1;
 const tankType medium = 2;
@@ -31,3 +36,12 @@ public:
 	Tank(const tankType&);
 
 };
+
+
+Accuracy calculateAccuracy(const Tank&, const Tank&);
+void calculateDamage(const Tactics&, const Accuracy&, const Tank&, Tank&);
+Tactics declareTactics(const Tank&);
+void checkMediumTankFlag(Tank&, bool);
+void checkVictoryConditions(const Tank&, bool);
+void announceStartOfTurn(const Tank&, const Tank&);
+void announceTactics(const Tactics&, const Tank&);
