@@ -39,9 +39,10 @@ public:
 
 
 Accuracy calculateAccuracy(const Tank&, const Tank&);
-void calculateDamage(const Tactics&, const Accuracy&, const Tank&, Tank&);
+void calculateDamage(const Tactics&,const Tactics&, const Accuracy&, const Tank&, Tank&);
 Tactics declareTactics(const Tank&);
-void checkMediumTankFlag(Tank&, bool);
-void checkVictoryConditions(const Tank&, bool);
+void checkMediumTankFlag(Tank&, bool&);
+void checkVictoryConditions(const Tank&, bool&);
 void announceStartOfTurn(const Tank&, const Tank&);
 void announceTactics(const Tactics&, const Tank&);
+void victoryWrapper();
