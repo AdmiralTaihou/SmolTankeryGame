@@ -7,7 +7,8 @@
 
 
 typedef std::size_t tankType;
-typedef double Accuracy;
+typedef std::size_t Accuracy;
+typedef std::size_t Damage;
 typedef std::size_t Tactics;
 typedef std::size_t crewRole;
 typedef std::size_t Experience;
@@ -57,9 +58,10 @@ public:
 
 };
 
-
+void addStaticCrewValues(Tank&, const Crew&);
 Accuracy calculateAccuracy(const Tank&, const Tank&);
-void calculateDamage(const Tactics&,const Tactics&, const Accuracy&, const Tank&, Tank&);
+int calculateDamage(const Tactics&,const Tactics&, const Accuracy&, const Tank&, Tank&);
+void dealDamage(const int&, const Tactics&, const Tactics&, const Accuracy&, Tank&);
 Tactics declareTactics(const Tank&);
 void checkMediumTankFlag(Tank&, bool&);
 void checkVictoryConditions(const Tank&, bool&);

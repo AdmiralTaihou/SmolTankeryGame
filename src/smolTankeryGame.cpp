@@ -61,6 +61,46 @@ Crew::Crew(const crewRole& role) {
 	}
 }
 
+void addStaticCrewValues(Tank& tank, const Crew& crew) 
+{
+	if (crew.experience != 0) {
+
+		switch (crew.role) {
+		case driver:
+			std::cout << crew.name << " increases " << tank.name << "'s evasion by " << crew.experience * 5 << " points." << std::endl;
+			tank.evasion += crew.experience * 5;
+			break;
+		case gunner:
+			std::cout << crew.name << " increases " << tank.name << "'s damage output by " << crew.experience * 5 << " points." << std::endl;
+			tank.damage += crew.experience * 5;
+			break;
+		case radio:
+			std::cout << crew.name << " increases " << tank.name << "'s health by " << crew.experience * 5 << " points." << std::endl;
+			tank.health += crew.experience * 5;
+			break;
+		case commander:
+			switch (crew.experience) {
+			case 1:
+				std::cout << crew.name << " increases " << tank.name << "'s evasion by 5 points." << std::endl;
+				tank.evasion += 5;
+				break;
+			case 2:
+				std::cout << crew.name << " increases " << tank.name << "'s evasion and damage output by 5 points." << std::endl;
+				tank.evasion += 5;
+				tank.damage += 5;
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+	else {
+		std::cout << crew.name << " does not contribute to this battle with their experience." << std::endl;
+	}
+}
+
 Accuracy calculateAccuracy(const Tank& tankA, const Tank& tankB)
 {
 
@@ -72,46 +112,63 @@ Accuracy calculateAccuracy(const Tank& tankA, const Tank& tankB)
 	return attackRoll;
 }
 
-void calculateDamage(const Tactics& tankATactics, const Tactics& tankBTactics, const Accuracy& attackRoll, const Tank& tankA, Tank& tankB)
+int calculateDamage(const Tactics& tankATactics, const Tactics& tankBTactics, const Accuracy& attackRoll, const Tank& tankA, Tank& tankB)
 {
 
 	int damageRoll = rand() % tankA.damage + 1;
 
 	if (attackRoll < 95 && tankB.type == 3 && tankBTactics == 0) {
 		std::cout << tankB.name << " is a Tank Destroyer and it's not angled...!" << std::endl;
-		std::cout << tankB.name << " takes 5 extra points of damage...!" << std::endl;
-		tankB.health -= damageRoll + tankATactics * 5;
-		std::cout << tankA.name << " deals " << damageRoll + tankATactics * 5 + 5 << " points of damage." << std::endl;
+		std::cout << tankB.name << " will take 5 extra points of damage...!" << std::endl;
+		std::cout << tankA.name << " is dealing " << damageRoll + tankATactics * 5 + 5 << " points of damage." << std::endl;
 	}
 	else if (attackRoll < 95 && tankB.type == 5) {
 		std::cout << tankA.name << " is a Super Heavy...!" << std::endl;
-		std::cout << tankA.name << " deals 10 extra points of damage...!" << std::endl;
-		tankB.health -= damageRoll + tankATactics * 5;
-		std::cout << tankA.name << " deals " << damageRoll + tankATactics * 5 + 10 << " points of damage." << std::endl;
+		std::cout << tankA.name << " will deal 10 extra points of damage...!" << std::endl;
+		std::cout << tankA.name << " is dealing " << damageRoll + tankATactics * 5 + 10 << " points of damage." << std::endl;
 	}
 	else if(attackRoll < 95){
-		tankB.health -= damageRoll + tankATactics * 5;
-		std::cout << tankA.name << " deals " << damageRoll + tankATactics * 5 << " points of damage." << std::endl;
+		std::cout << tankA.name << " is dealing " << damageRoll + tankATactics * 5 << " points of damage." << std::endl;
 	}
 	else if(attackRoll >= 95 && tankB.type == 3 && tankBTactics == 0){
 		std::cout << tankB.name << " is a Tank Destroyer and it's not angled...!" << std::endl;
-		std::cout << tankB.name << " takes 5 extra points of damage...!" << std::endl;
-		tankB.health -= (damageRoll + tankATactics * 5) * 2 + 5;
-		std::cout << "A critical hit by " << tankA.name << " dealing" << (damageRoll + tankATactics * 5) * 2 + 5 << " points of damage to " << tankB.name << "!" << std::endl;
+		std::cout << tankB.name << " will take 5 extra points of damage...!" << std::endl;
+		std::cout << "A critical hit by " << tankA.name << " is dealing" << (damageRoll + tankATactics * 5) * 2 + 5 << " points of damage to " << tankB.name << "!" << std::endl;
 	}
 	else if (attackRoll > 95 && tankB.type == 5) {
 		std::cout << tankA.name << " is a Super Heavy...!" << std::endl;
 		std::cout << tankA.name << " deals 10 extra points of damage...!" << std::endl;
-		tankB.health -= (damageRoll + tankATactics * 5) * 2 + 10;
-		std::cout << "A critical hit by " << tankA.name << " dealing" << (damageRoll + tankATactics * 5) * 2 + 10 << " points of damage to " << tankB.name << "!" << std::endl;
+		std::cout << "A critical hit by " << tankA.name << " is dealing" << (damageRoll + tankATactics * 5) * 2 + 10 << " points of damage to " << tankB.name << "!" << std::endl;
 	}
 	else if(attackRoll >= 95) {
-		tankB.health -= (damageRoll + tankATactics * 5) * 2;
-		std::cout << "A critical hit by " << tankA.name << " dealing" << (damageRoll + tankATactics * 5) * 2 << " points of damage to " << tankB.name << "!" << std::endl;
+		std::cout << "A critical hit by " << tankA.name << " is dealing" << (damageRoll + tankATactics * 5) * 2 << " points of damage to " << tankB.name << "!" << std::endl;
 	}
-	std::cout << tankB.name << "'s health has been lowered to " << tankB.health << "!" << std::endl;
+	std::cout << tankB.name << "'s health will be lowered to " << tankB.health << "!" << std::endl;
+	return damageRoll;
+}
 
+void dealDamage(const int& damage, const Tactics& tankATactics, const Tactics& tankBTactics, const Accuracy& attackRoll, Tank& tankB)
+{
 
+	if (attackRoll < 95 && tankB.type == 3 && tankBTactics == 0) {
+		tankB.health -= damage + tankATactics * 5;
+	}
+	else if (attackRoll < 95 && tankB.type == 5) {
+		tankB.health -= damage + tankATactics * 5;
+	}
+	else if (attackRoll < 95) {
+		tankB.health -= damage + tankATactics * 5;
+	}
+	else if (attackRoll >= 95 && tankB.type == 3 && tankBTactics == 0) {
+		tankB.health -= (damage + tankATactics * 5) * 2 + 5;
+	}
+	else if (attackRoll > 95 && tankB.type == 5) {
+		tankB.health -= (damage + tankATactics * 5) * 2 + 10;
+	}
+	else if (attackRoll >= 95) {
+		tankB.health -= (damage + tankATactics * 5) * 2;
+	}
+	std::cout << tankB.name << "'s health is now " << tankB.health << "!" << std::endl;
 }
 
 Tactics declareTactics(const Tank& tank)
@@ -161,7 +218,8 @@ void announceTactics(const Tactics& tactics, const Tank& tank)
 	}
 }
 
-void victoryWrapper() {
+void victoryWrapper() 
+{
 	std::cout << "The game is over! Thanks for playing!" << std::endl;
 	std::cout << "Go RP this, and after that you can close this window!" << std::endl;
 }
@@ -233,6 +291,11 @@ int main(int argc, char* argv[])
 	bool tank1SuperHeavyFlag = true;
 	bool tank2SuperHeavyFlag = true;
 	Tactics tank2Tactics = 0;
+	std::string loaderChoice = "";
+	
+
+	addStaticCrewValues(tank1, crew1);
+	addStaticCrewValues(tank2, crew2);
 
 	while (victory != true) {
 
@@ -248,26 +311,51 @@ int main(int argc, char* argv[])
 
 			tank1SuperHeavyFlag = false;
 
-		if (attackRoll1 >= tank2.evasion - tank2Tactics * 5) {
+			if (attackRoll1 >= tank2.evasion - tank2Tactics * 5) {
 
-			calculateDamage(tank1Tactics, tank2Tactics, attackRoll1, tank1, tank2);
+				Damage damageRoll = calculateDamage(tank1Tactics, tank2Tactics, attackRoll1, tank1, tank2);
 
-		}
+				if (crew1.role == loader && crew1.experience != 0) {
+					std::cout << crew1.name << " is an experience loader! Do you want to reroll the damage? y / n(default)" << std::endl;
+					std::cin.ignore();
+					std::getline(std::cin, loaderChoice);
+					if (loaderChoice == "y") {
+						damageRoll = calculateDamage(tank1Tactics, tank2Tactics, attackRoll1, tank1, tank2) + (crew1.experience - 1) * 5;
+					}
+					else {
+						//If "n" or other input -> Do nothing
+					}
+				}
+				dealDamage(damageRoll, tank1Tactics, tank2Tactics, attackRoll1, tank2);
+			}
 
-		else {
+			else {
 
-			std::cout << "It's a miss!" << std::endl;
+				std::cout << "It's a miss!" << std::endl;
 
-			if (tank1.type == light) {
+				if (tank1.type == light) {
 
-				std::cout << tank1.name << " is a light tank! It quickly reloads and shoots again!" << std::endl;
+					std::cout << tank1.name << " is a light tank! It quickly reloads and shoots again!" << std::endl;
 
-				Accuracy attackRoll1B = calculateAccuracy(tank1, tank2);
+					Accuracy attackRoll1B = calculateAccuracy(tank1, tank2);
 
-				if (attackRoll1B >= tank2.evasion - tank2Tactics * 5) {
+					if (attackRoll1B >= tank2.evasion - tank2Tactics * 5) {
 
-					calculateDamage(tank1Tactics, tank2Tactics, attackRoll1B, tank1, tank2);
+						Damage damageRoll = calculateDamage(tank1Tactics, tank2Tactics, attackRoll1B, tank1, tank2);
 
+						if (crew1.role == loader && crew1.experience != 0) {
+							std::cout << crew1.name << " is an experience loader! Do you want to reroll the damage? y / n(default)" << std::endl;
+							std::cin.ignore();
+							std::getline(std::cin, loaderChoice);
+							if (loaderChoice == "y") {
+								damageRoll = calculateDamage(tank1Tactics, tank2Tactics, attackRoll1B, tank1, tank2) + (crew1.experience - 1) * 5;
+							}
+							else {
+								//If "n" or other input -> Do nothing
+							}
+						}
+						dealDamage(damageRoll, tank1Tactics, tank2Tactics, attackRoll1B, tank2);
+					}
 				}
 			}
 
@@ -284,10 +372,8 @@ int main(int argc, char* argv[])
 			}
 
 			system("pause");
-
 		}
 
-		}
 		else {
 			std::cout << tank1.name << " is a Super Heavy tank and needs to take one turn to be operational again!" << std::endl;
 			tank1SuperHeavyFlag = true;
@@ -308,8 +394,20 @@ int main(int argc, char* argv[])
 
 		if (attackRoll2 >= tank1.evasion - tank1Tactics * 5) {
 
-			calculateDamage(tank2Tactics, tank1Tactics, attackRoll2, tank2, tank1);
+			Damage damageRoll = calculateDamage(tank2Tactics, tank1Tactics, attackRoll2, tank2, tank1);
 
+			if (crew2.role == loader && crew2.experience != 0) {
+				std::cout << crew2.name << " is an experience loader! Do you want to reroll the damage? y / n(default)" << std::endl;
+				std::cin.ignore();
+				std::getline(std::cin, loaderChoice);
+				if (loaderChoice == "y") {
+					damageRoll = calculateDamage(tank2Tactics, tank1Tactics, attackRoll2, tank2, tank1) + (crew2.experience - 1) * 5;
+				}
+				else {
+					//If "n" or other input -> Do nothing
+				}
+			}
+			dealDamage(damageRoll, tank2Tactics, tank1Tactics, attackRoll2, tank1);
 		}
 
 		else {
@@ -324,7 +422,20 @@ int main(int argc, char* argv[])
 
 				if (attackRoll2B >= tank1.evasion - tank1Tactics * 5) {
 
-					calculateDamage(tank2Tactics, tank1Tactics, attackRoll2B, tank2, tank1);
+					Damage damageRoll = calculateDamage(tank2Tactics, tank1Tactics, attackRoll2B, tank2, tank1);
+
+					if (crew2.role == loader && crew2.experience != 0) {
+						std::cout << crew2.name << " is an experience loader! Do you want to reroll the damage? y / n(default)" << std::endl;
+						std::cin.ignore();
+						std::getline(std::cin, loaderChoice);
+						if (loaderChoice == "y") {
+							damageRoll = calculateDamage(tank2Tactics, tank1Tactics, attackRoll2B, tank2, tank1) + (crew2.experience - 1) * 5;
+						}
+						else {
+							//If "n" or other input -> Do nothing
+						}
+					}
+					dealDamage(damageRoll, tank2Tactics, tank1Tactics, attackRoll2B, tank1);
 
 				}
 			}
