@@ -1,6 +1,19 @@
 #include "smolTankeryGame.h"
 #include <string>
 
+bool tank1MediumFlag = true;
+bool tank2MediumFlag = true;
+bool tank1SuperHeavyFlag = true;
+bool tank2SuperHeavyFlag = true;
+bool victory = false;
+
+Tactics tank1Tactics = 0;
+Tactics tank2Tactics = 0;
+std::string loaderChoice = "";
+
+tankType type; std::string name; crewRole role; Experience experience;
+
+
 Tank::Tank(const tankType& type) {
 
 	switch(type){
@@ -153,28 +166,28 @@ int calculateDamage(const Tactics& tankATactics, const Tactics& tankBTactics, co
 	return damageRoll;
 }
 
-void dealDamage(const int& damage, const Tactics& tankATactics, const Tactics& tankBTactics, const Accuracy& attackRoll, Tank& tankB)
+void dealDamage(const int& damage, const Tactics& tankATactics, const Tactics& tankBTactics, const Accuracy& attackRoll, Tank& tank)
 {
 
-	if (attackRoll < 95 && tankB.type == 3 && tankBTactics == 0) {
-		tankB.health -= (damage + tankATactics * 5 + 5);
+	if (attackRoll < 95 && tank.type == 3 && tankBTactics == 0) {
+		tank.health -= (damage + tankATactics * 5 + 5);
 	}
-	else if (attackRoll < 95 && tankB.type == 5) {
-		tankB.health -= (damage + tankATactics * 5 + 10);
+	else if (attackRoll < 95 && tank.type == 5) {
+		tank.health -= (damage + tankATactics * 5 + 10);
 	}
 	else if (attackRoll < 95) {
-		tankB.health -= (damage + tankATactics * 5);
+		tank.health -= (damage + tankATactics * 5);
 	}
-	else if (attackRoll >= 95 && tankB.type == 3 && tankBTactics == 0) {
-		tankB.health -= ((damage + tankATactics * 5) * 2 + 5);
+	else if (attackRoll >= 95 && tank.type == 3 && tankBTactics == 0) {
+		tank.health -= ((damage + tankATactics * 5) * 2 + 5);
 	}
-	else if (attackRoll > 95 && tankB.type == 5) {
-		tankB.health -= ((damage + tankATactics * 5) * 2 + 10);
+	else if (attackRoll > 95 && tank.type == 5) {
+		tank.health -= ((damage + tankATactics * 5) * 2 + 10);
 	}
 	else if (attackRoll >= 95) {
-		tankB.health -= ((damage + tankATactics * 5) * 2);
+		tank.health -= ((damage + tankATactics * 5) * 2);
 	}
-	std::cout << tankB.name << "'s health is now " << tankB.health << "!" << std::endl << std::endl;
+	std::cout << tank.name << "'s health is now " << tank.health << "!" << std::endl << std::endl;
 }
 
 Tactics declareTactics(const Tank& tank)
@@ -224,14 +237,12 @@ void victoryWrapper()
 {
 	std::cout << "The game is over! Thanks for playing!" << std::endl;
 	std::cout << "Go RP this, and after that you can close this window!" << std::endl;
+	system("pause");
+
 }
 
 int main(int argc, char* argv[])
 {
-
-	bool victory = false;
-	tankType type; std::string name; crewRole role; Experience experience;
-
 	std::cout << "Insert a random integer number to create a fight seed." << std::endl;
 	std::cout << "If you share it with your friend and choose the same options, the same battle will be recreated." << std::endl << std::endl;
 	int seed;
@@ -242,6 +253,7 @@ int main(int argc, char* argv[])
 	std::cout << "1 - Light Tank" << std::endl; std::cout << "2 - Medium Tank" << std::endl; std::cout << "3 - Tank Destroyer" << std::endl; std::cout << "4 - Heavy Tank" << std::endl; std::cout << "5 - Super Heavy Tank" << std::endl;
 	std::cin >> type;
 	Tank tank1(type);
+	std::cout << "" << std::endl;
 	std::cout << "Input the tank model:" << std::endl;
 	std::cin.ignore();
 	std::getline(std::cin, name);
@@ -253,12 +265,14 @@ int main(int argc, char* argv[])
 	std::cout << "0 - Blank/No Role" << std::endl; std::cout << "1 - Driver" << std::endl; std::cout << "2 - Gunner" << std::endl; std::cout << "3 - Loader" << std::endl; std::cout << "4 - Radio Operator" << std::endl; std::cout << "5 - Commander" << std::endl;
 	std::cin >> role;
 	Crew crew1(role);
+	std::cout << "" << std::endl;
 	if (role != 0) {
 		std::cout << "Please choose how experienced the crewmember is." << std::endl;
 		std::cout << "0 - Rookie" << std::endl; std::cout << "1 - Expert" << std::endl; std::cout << "2 - Ace" << std::endl;
 		std::cin >> experience;
 		crew1.experience = experience;
 	}
+	std::cout << "" << std::endl;
 	std::cout << "Input the crewmember's name:" << std::endl;
 	std::cin.ignore();
 	std::getline(std::cin, name);
@@ -269,6 +283,7 @@ int main(int argc, char* argv[])
 	std::cout << "1 - Light Tank" << std::endl; std::cout << "2 - Medium Tank" << std::endl; std::cout << "3 - Tank Destroyer" << std::endl; std::cout << "4 - Heavy Tank" << std::endl; std::cout << "5 - Super Heavy Tank" << std::endl;
 	std::cin >> type;
 	Tank tank2(type);
+	std::cout << "" << std::endl;
 	std::cout << "Input the tank model:" << std::endl;
 	std::cin.ignore();
 	std::getline(std::cin, name);
@@ -280,30 +295,26 @@ int main(int argc, char* argv[])
 	std::cout << "0 - Blank/No Role" << std::endl; std::cout << "1 - Driver" << std::endl; std::cout << "2 - Gunner" << std::endl; std::cout << "3 - Loader" << std::endl; std::cout << "4 - Radio Operator" << std::endl; std::cout << "5 - Commander" << std::endl;
 	std::cin >> role;
 	Crew crew2(role);
+	std::cout << "" << std::endl;
 	if (role != 0) {
 		std::cout << "Please choose how experienced the crewmember is." << std::endl;
 		std::cout << "0 - Rookie" << std::endl; std::cout << "1 - Expert" << std::endl; std::cout << "2 - Ace" << std::endl;
 		std::cin >> experience;
 		crew2.experience = experience;
 	}
+	std::cout << "" << std::endl;
 	std::cout << "Input the crewmember's name:" << std::endl;
 	std::cin.ignore();
 	std::getline(std::cin, name);
 	crew2.name = name;
 	std::cout << "" << std::endl;
 
-	bool tank1MediumFlag = true;
-	bool tank2MediumFlag = true;
-	bool tank1SuperHeavyFlag = true;
-	bool tank2SuperHeavyFlag = true;
-	Tactics tank2Tactics = 0;
-	std::string loaderChoice = "";
-	
-
 	addStaticCrewValues(tank1, crew1);
 	addStaticCrewValues(tank2, crew2);
 
 	while (victory != true) {
+
+		if ((tank1.type == superHeavy && tank1SuperHeavyFlag == true) || (tank1.type != 5)) {
 
 		announceStartOfTurn(tank1, tank2);
 
@@ -313,9 +324,8 @@ int main(int argc, char* argv[])
 
 		Accuracy attackRoll1 = calculateAccuracy(tank1, tank2);
 
-		if ((tank1.type == 5 && tank1SuperHeavyFlag == true) || (tank1.type != 5)) {
 
-			tank1SuperHeavyFlag = false;
+		tank1SuperHeavyFlag = false;
 
 			if (attackRoll1 >= tank2.evasion - tank2Tactics * 5) {
 
@@ -338,10 +348,12 @@ int main(int argc, char* argv[])
 			else {
 
 				std::cout << "It's a miss!" << std::endl;
+				std::cout << "" << std::endl;
 
 				if (tank1.type == light) {
 
 					std::cout << tank1.name << " is a light tank! It quickly reloads and shoots again!" << std::endl;
+					std::cout << "" << std::endl;
 
 					Accuracy attackRoll1B = calculateAccuracy(tank1, tank2);
 
@@ -376,27 +388,26 @@ int main(int argc, char* argv[])
 			while (victory == true) {
 				victoryWrapper();
 			}
-
-			system("pause");
 		}
 
 		else {
+			std::cout << "################ NEXT TURN ################" << std::endl;
 			std::cout << tank1.name << " is a Super Heavy tank and needs to take one turn to be operational again!" << std::endl;
+			std::cout << "" << std::endl;
 			tank1SuperHeavyFlag = true;
 		}
 
-
+		std::cout << "################ PLAYER 2 TURN ################" << std::endl << std::endl;
 		// SECOND PLAYER TURN
 
+		if ((tank2.type == 5 && tank2SuperHeavyFlag == true) || (tank2.type != 5)) {
 		Tactics tank2Tactics = declareTactics(tank2);
 
 		announceTactics(tank2Tactics, tank2);
 
 		Accuracy attackRoll2 = calculateAccuracy(tank2, tank1);
 
-		if ((tank2.type == 5 && tank2SuperHeavyFlag == true) || (tank2.type != 5)) {
-
-			tank2SuperHeavyFlag = false;
+		tank2SuperHeavyFlag = false;
 
 		if (attackRoll2 >= tank1.evasion - tank1Tactics * 5) {
 
@@ -423,6 +434,7 @@ int main(int argc, char* argv[])
 			if (tank2.type == light) {
 
 				std::cout << tank2.name << " is a light tank! It quickly reloads and shoots again!" << std::endl;
+				std::cout << "" << std::endl;
 
 				Accuracy attackRoll2B = calculateAccuracy(tank2, tank1);
 
@@ -457,18 +469,15 @@ int main(int argc, char* argv[])
 			while (victory == true) {
 				victoryWrapper();
 			}
-
-			system("pause");
 		}
-
-
 		}
 		else {
+		std::cout << "################ NEXT TURN ################" << std::endl;
 		std::cout << tank2.name << " is a Super Heavy tank and needs to take one turn to be operational again!" << std::endl;
+		std::cout << "" << std::endl;
 		tank2SuperHeavyFlag = true;
 		}
-
 		system("pause");
-		return 0;
 	}
+	return 0;
 }
