@@ -1,8 +1,6 @@
 #include "smolTankeryGame.h"
 #include <string>
 
-
-
 Tank::Tank(const tankType& type) {
 
 	switch(type){
@@ -38,6 +36,28 @@ Tank::Tank(const tankType& type) {
 		break;
 	default:
 		throw std::exception("Incorrect input for tank type.");
+	}
+}
+
+Crew::Crew(const crewRole& role) {
+	switch (role) {
+	case driver:
+		Crew::role = driver;
+		break;
+	case gunner:
+		Crew::role = gunner;
+		break;
+	case loader:
+		Crew::role = loader;
+		break;
+	case radio:
+		Crew::role = radio;
+		break;
+	case commander:
+		Crew::role = commander;
+		break;
+	default:
+		Crew::role = blank;
 	}
 }
 
@@ -150,7 +170,7 @@ int main(int argc, char* argv[])
 {
 
 	bool victory = false;
-	tankType type; std::string name;
+	tankType type; std::string name; crewRole role; Experience experience;
 
 	std::cout << "Insert a random integer number to create a fight seed." << std::endl;
 	std::cout << "If you share it with your friend and choose the same options, the same battle will be recreated." << std::endl;
@@ -167,6 +187,22 @@ int main(int argc, char* argv[])
 	std::getline(std::cin, name);
 	tank1.name = name;
 
+	std::cout << "Please choose the role of the crewmember you will use during this battle." << std::endl;
+	std::cout << "If you don't want to use bonuses this battle, choose 0." << std::endl;
+	std::cout << "0 - Blank/No Role" << std::endl; std::cout << "1 - Driver" << std::endl; std::cout << "2 - Gunner" << std::endl; std::cout << "3 - Loader" << std::endl; std::cout << "4 - Radio Operator" << std::endl; std::cout << "5 - Commander" << std::endl;
+	std::cin >> role;
+	Crew crew1(role);
+	if (role != 0) {
+		std::cout << "Please choose how experienced the crewmember is." << std::endl;
+		std::cout << "0 - Rookie" << std::endl; std::cout << "1 - Expert" << std::endl; std::cout << "2 - Ace" << std::endl;
+		std::cin >> experience;
+		crew1.experience = experience;
+	}
+	std::cout << "Input the crewmember's name:" << std::endl;
+	std::cin.ignore();
+	std::getline(std::cin, name);
+	crew1.name = name;
+
 	std::cout << "Please, input the number corresponding to the class of Tank 2." << std::endl;
 	std::cout << "1 - Light Tank" << std::endl; std::cout << "2 - Medium Tank" << std::endl; std::cout << "3 - Tank Destroyer" << std::endl; std::cout << "4 - Heavy Tank" << std::endl; std::cout << "5 - Super Heavy Tank" << std::endl;
 	std::cin >> type;
@@ -175,6 +211,22 @@ int main(int argc, char* argv[])
 	std::cin.ignore();
 	std::getline(std::cin, name);
 	tank2.name = name;
+
+	std::cout << "Please choose the role of the crewmember you will use during this battle." << std::endl;
+	std::cout << "If you don't want to use bonuses this battle, choose 0." << std::endl;
+	std::cout << "0 - Blank/No Role" << std::endl; std::cout << "1 - Driver" << std::endl; std::cout << "2 - Gunner" << std::endl; std::cout << "3 - Loader" << std::endl; std::cout << "4 - Radio Operator" << std::endl; std::cout << "5 - Commander" << std::endl;
+	std::cin >> role;
+	Crew crew2(role);
+	if (role != 0) {
+		std::cout << "Please choose how experienced the crewmember is." << std::endl;
+		std::cout << "0 - Rookie" << std::endl; std::cout << "1 - Expert" << std::endl; std::cout << "2 - Ace" << std::endl;
+		std::cin >> experience;
+		crew2.experience = experience;
+	}
+	std::cout << "Input the crewmember's name:" << std::endl;
+	std::cin.ignore();
+	std::getline(std::cin, name);
+	crew2.name = name;
 
 	bool tank1MediumFlag = true;
 	bool tank2MediumFlag = true;

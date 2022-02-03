@@ -9,6 +9,9 @@
 typedef std::size_t tankType;
 typedef double Accuracy;
 typedef std::size_t Tactics;
+typedef std::size_t crewRole;
+typedef std::size_t Experience;
+typedef std::string Name;
 
 const Tactics maneuver = 0;
 const Tactics angle = 1;
@@ -19,21 +22,38 @@ const tankType tankDestroyer = 3;
 const tankType heavy = 4;
 const tankType superHeavy = 5;
 
+const crewRole blank = 0;
+const crewRole driver = 1;
+const crewRole gunner = 2;
+const crewRole loader = 3;
+const crewRole radio = 4;
+const crewRole commander = 5;
+
 
 class Tank {
 public:
 	typedef int Health;
 	typedef int Evasion;
 	typedef int Damage;
-	typedef std::string Name;
 
 	Health health = 1;
 	Evasion evasion = 1;
 	Damage damage = 1;
 	Name name = "";
-	tankType type = 6;
+	tankType type = 1;
 
 	Tank(const tankType&);
+
+};
+
+class Crew {
+public:
+
+	Name name = "";
+	crewRole role = 0;
+	Experience experience = 0;
+
+	Crew(const crewRole&);
 
 };
 
