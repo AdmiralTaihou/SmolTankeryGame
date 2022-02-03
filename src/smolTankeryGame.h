@@ -61,7 +61,7 @@ public:
 void addStaticCrewValues(Tank&, const Crew&);
 Accuracy calculateAccuracy(const Tank&, const Tank&);
 int calculateDamage(const Tactics&,const Tactics&, const Accuracy&, const Tank&, Tank&);
-void dealDamage(const int&, const Tactics&, const Tactics&, const Accuracy&, Tank&);
+void dealDamage(const int&, Tank&);
 Tactics declareTactics(const Tank&);
 void checkMediumTankFlag(Tank&, bool&);
 void checkVictoryConditions(const Tank&, bool&);
