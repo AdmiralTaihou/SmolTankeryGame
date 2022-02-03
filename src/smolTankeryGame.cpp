@@ -9,8 +9,6 @@ bool victory = false;
 
 int seed = 0;
 
-Tactics tank1Tactics = 0;
-Tactics tank2Tactics = 0;
 std::string loaderChoice = "";
 
 tankType type; std::string name; crewRole role; Experience experience;
@@ -50,7 +48,12 @@ Tank::Tank(const tankType& type) {
 		Tank::type = superHeavy;
 		break;
 	default:
-		throw std::exception("Incorrect input for tank type.");
+		std::cout << "Incorrect output. Tanks is defaulted as a light tank." << std::endl;
+		Tank::health = 45;
+		Tank::evasion = 70;
+		Tank::damage = 20;
+		Tank::type = light;
+		break;
 	}
 }
 
@@ -156,19 +159,19 @@ int calculateDamage(const Tactics& tankATactics, const Tactics& tankBTactics, co
 		std::cout << tankB.name << " is a Tank Destroyer and it's not angled...!" << std::endl;
 		std::cout << tankB.name << " will take 5 extra points of damage...!" << std::endl;
 		damageDealt = ((damageRoll + tankATactics * 5) * 2 + 5);
-		std::cout << "A critical hit by " << tankA.name << " is dealing" << damageDealt << " points of damage to " << tankB.name << "!" << std::endl;
+		std::cout << "A critical hit by " << tankA.name << " is dealing " << damageDealt << " points of damage to " << tankB.name << "!" << std::endl;
 		std::cout << tankB.name << "'s health will be lowered to " << tankB.health - damageDealt << "!" << std::endl << std::endl;
 	}
 	else if (attackRoll > 95 && tankA.type == 5) {
 		std::cout << tankA.name << " is a Super Heavy...!" << std::endl;
 		std::cout << tankA.name << " deals 10 extra points of damage...!" << std::endl;
 		damageDealt = ((damageRoll + tankATactics * 5) * 2 + 10);
-		std::cout << "A critical hit by " << tankA.name << " is dealing" << damageDealt << " points of damage to " << tankB.name << "!" << std::endl;
+		std::cout << "A critical hit by " << tankA.name << " is dealing " << damageDealt << " points of damage to " << tankB.name << "!" << std::endl;
 		std::cout << tankB.name << "'s health will be lowered to " << tankB.health - damageDealt << "!" << std::endl << std::endl;
 	}
 	else if(attackRoll >= 95) {
 		damageDealt = ((damageRoll + tankATactics * 5) * 2);
-		std::cout << "A critical hit by " << tankA.name << " is dealing" << damageDealt << " points of damage to " << tankB.name << "!" << std::endl;
+		std::cout << "A critical hit by " << tankA.name << " is dealing " << damageDealt << " points of damage to " << tankB.name << "!" << std::endl;
 		std::cout << tankB.name << "'s health will be lowered to " << tankB.health - damageDealt << "!" << std::endl << std::endl;
 	}
 	return damageDealt;
@@ -234,15 +237,14 @@ void victoryWrapper()
 
 int main(int argc, char* argv[])
 {
-
 	std::cout << "Insert a random integer number to create a fight seed." << std::endl;
-	std::cout << "If you share it with your friend and choose the same options, the same battle will be recreated." << std::endl << std::endl;
+	std::cout << "If you share it with your friend and choose the same options, the same battle will be recreated." << std::endl;
 	std::cin >> seed;
 	srand(seed);
 	std::cout << "" << std::endl;
 
 	std::cout << "Decide who chooses odds and who chooses evens to see who is first player." << std::endl;
-	std::cout << "Once you have decided, press any key and the program will output a name." << std::endl;
+	std::cout << "Once you have decided, press any key and the program will output a number." << std::endl;
 	std::cout << "The winner gets to be first player." << std::endl;
 	system("pause");
 	int oddsorevens = rand() % 10 + 1;
@@ -315,18 +317,20 @@ int main(int argc, char* argv[])
 	addStaticCrewValues(tank1, crew1);
 	addStaticCrewValues(tank2, crew2);
 
+	Tactics tank1Tactics = 0;
+	Tactics tank2Tactics = 0;
+
 	while (victory != true) {
 
 		if ((tank1.type == superHeavy && tank1SuperHeavyFlag == true) || (tank1.type != 5)) {
 
 		announceStartOfTurn(tank1, tank2);
 
-		Tactics tank1Tactics = declareTactics(tank1);
+		tank1Tactics = declareTactics(tank1);
 
 		announceTactics(tank1Tactics, tank1);
 
 		Accuracy attackRoll1 = calculateAccuracy(tank1, tank2);
-
 
 		tank1SuperHeavyFlag = false;
 
@@ -398,7 +402,8 @@ int main(int argc, char* argv[])
 		// SECOND PLAYER TURN
 
 		if ((tank2.type == 5 && tank2SuperHeavyFlag == true) || (tank2.type != 5)) {
-		Tactics tank2Tactics = declareTactics(tank2);
+
+		tank2Tactics = declareTactics(tank2);
 
 		announceTactics(tank2Tactics, tank2);
 
