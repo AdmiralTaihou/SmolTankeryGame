@@ -136,7 +136,7 @@ int calculateDamage(const Tactics& tankATactics, const Tactics& tankBTactics, co
 		std::cout << tankA.name << " is dealing " << (damageRoll + tankATactics * 5 + 5) << " points of damage." << std::endl;
 		std::cout << tankB.name << "'s health will be lowered to " << tankB.health - (damageRoll + tankATactics * 5 + 5) << "!" << std::endl << std::endl;
 	}
-	else if (attackRoll < 95 && tankB.type == 5) {
+	else if (attackRoll < 95 && tankA.type == 5) {
 		std::cout << tankA.name << " is a Super Heavy...!" << std::endl;
 		std::cout << tankA.name << " will deal 10 extra points of damage...!" << std::endl;
 		std::cout << tankA.name << " is dealing " << (damageRoll + tankATactics * 5 + 10) << " points of damage." << std::endl;
@@ -152,7 +152,7 @@ int calculateDamage(const Tactics& tankATactics, const Tactics& tankBTactics, co
 		std::cout << "A critical hit by " << tankA.name << " is dealing" << ((damageRoll + tankATactics * 5) * 2 + 5) << " points of damage to " << tankB.name << "!" << std::endl;
 		std::cout << tankB.name << "'s health will be lowered to " << tankB.health - ((damageRoll + tankATactics * 5) * 2 + 5) << "!" << std::endl << std::endl;
 	}
-	else if (attackRoll > 95 && tankB.type == 5) {
+	else if (attackRoll > 95 && tankA.type == 5) {
 		std::cout << tankA.name << " is a Super Heavy...!" << std::endl;
 		std::cout << tankA.name << " deals 10 extra points of damage...!" << std::endl;
 		std::cout << "A critical hit by " << tankA.name << " is dealing" << ((damageRoll + tankATactics * 5) * 2 + 10) << " points of damage to " << tankB.name << "!" << std::endl;
